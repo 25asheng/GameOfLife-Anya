@@ -5,5 +5,4 @@ public enum CellState {
     DEAD,
     WILL_DIE,
     WILL_REVIVE;
-
 }

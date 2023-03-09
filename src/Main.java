@@ -1,16 +1,14 @@
 import processing.core.PApplet;
+import java.util.Random;
 
 public class Main extends PApplet {
     private static final int CELL_SIZE = 20;
-
     public static final int NUM_ROWS = 30;
     public static final int NUM_COLUMNS = 60;
     public static Main app;
-    private CellState cellState = CellState.DEAD;
+    private CellState cellState;
     private Cell[][] cells = new Cell[NUM_ROWS][NUM_COLUMNS];
     private boolean doEvolve = false;
-
-
     public static void main(String[] args){
         PApplet.main("Main");
     }
@@ -20,16 +18,28 @@ public class Main extends PApplet {
         app = this;
     }
 
-
     public void settings(){
         size(NUM_COLUMNS * CELL_SIZE,NUM_ROWS * CELL_SIZE);
     }
+
+    //I chose to do the extension where I randomize the starting state of my Cells
+    //The implementation can be seen in setup
 
     public void setup(){
         Rules rules = new MooreRules(new int[]{3}, new int[]{2, 3});
         for(int row = 0; row < NUM_ROWS; row++){
             for(int col = 0; col < NUM_COLUMNS; col++){
-                Cell c = new Cell(col*CELL_SIZE,row*CELL_SIZE,CELL_SIZE,row,col,cellState,rules);
+                if(row == 0 || row == cells.length-1 || col == 0 || col == cells[0].length-1){
+                    cellState = CellState.DEAD; //Cell must start out as DEAD
+                } else {
+                    float rand = random(0,1);
+                    if(rand <= 0.5){ //half the time, make the Cell dead
+                        cellState = CellState.DEAD;
+                    } else { //the other half the time make the Cell alive
+                        cellState = CellState.ALIVE;
+                    }
+                }
+                Cell c = new Cell(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, row, col, cellState, rules);
                 cells[row][col] = c;
             }
         }
@@ -65,17 +75,8 @@ public class Main extends PApplet {
                 cells[i][j].applyRules(cells);
             }
         }
-    }/*
-    Define applyRules, which iterates over cells and calls applyRules on each element.
-    In order to avoid incorporating special cases for cells on the edge of the grid,
-    do not iterate over the first and last rows and columns.
+    }
 
-    Define evolve, which iterates over cells and calls evolve on each element.
-    Add an instance variable (initially false) for starting and suspending evolutions
-    private boolean doEvolve;
-    Define keyPressed to toggle doEvolve.
-    Update draw to call applyRules followed by evolve if doEvolve is true.
-    */
     public void evolve(){
         for(int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLUMNS; j++) {

@@ -1,6 +1,7 @@
+/** determines if Cells should be born or survive in the next generation
+ */
 public abstract class Rules {
     public abstract boolean shouldBeBorn(int liveNeighbors);
-
     public abstract boolean shouldSurvive(int liveNeighbors);
 
     public CellState applyRules(CellState cellState, int liveNeighbors) {
